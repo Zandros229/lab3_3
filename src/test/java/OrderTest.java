@@ -17,7 +17,7 @@ import java.time.temporal.TemporalAmount;
 public class OrderTest {
     private Order order;
     @Test
-    public void test(){
+    public void orderExpiredDateTest(){
         order=new Order();
         order.submit();
         Assertions.assertThrows(OrderExpiredException.class,()->order.confirm()) ;
