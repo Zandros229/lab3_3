@@ -4,6 +4,7 @@ import edu.iis.mto.time.OrderExpiredException;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -16,10 +17,11 @@ import java.time.temporal.TemporalAmount;
 
 public class OrderTest {
     private Order order;
+
     @Test
-    public void orderExpiredDateTest(){
-        order=new Order();
+    public void orderExpiredDateTest() {
+        order = new Order();
         order.submit();
-        Assertions.assertThrows(OrderExpiredException.class,()->order.confirm()) ;
+        Assertions.assertThrows(OrderExpiredException.class, () -> order.confirm());
     }
 }
