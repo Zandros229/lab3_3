@@ -13,39 +13,25 @@ import org.joda.time.Hours;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-public class Order extends Clock {
-    private final Instant WHEN_STARTED = Instant.now();
-    private final ZoneId DEFAULT_TZONE = ZoneId.systemDefault();
-    private long count = 0;
+public class Order  {
     private static final int VALID_PERIOD_HOURS = 24;
     private State orderState;
     private List<OrderItem> items = new ArrayList<OrderItem>();
-    private Instant subbmitionDate;
+    public DateTime subbmitionDate;
+    public Time time;
 
-    public Order() {
+
+
+
+    public Order(Time time) {
+        this.time=time;
         orderState = State.CREATED;
     }
 
-    @Override
-    public ZoneId getZone() {
-        return DEFAULT_TZONE;
-    }
-
-    @Override
-    public Clock withZone(ZoneId zone) {
-        return Clock.fixed(WHEN_STARTED, zone);
-    }
-
-    @Override
-    public Instant instant() {
-        return nextInstant();
-    }
 
 
-    private Instant nextInstant() {
-        ++count;
-        return WHEN_STARTED.plusSeconds(count);
-    }
+
+
 
     public void addItem(OrderItem item) {
         requireState(State.CREATED, State.SUBMITTED);
@@ -59,14 +45,15 @@ public class Order extends Clock {
         requireState(State.CREATED);
 
         orderState = State.SUBMITTED;
-        subbmitionDate = Instant.now().plusSeconds(-90001l);
+        subbmitionDate = time.getTime();
 
     }
+
 
     public void confirm() {
         requireState(State.SUBMITTED);
 
-        int hoursElapsedAfterSubmittion = Hours.hoursBetween(DateTime.parse(subbmitionDate.toString()), DateTime.parse(Instant.now().toString())).getHours();
+        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, time.getTime()).getHours();
         if (hoursElapsedAfterSubmittion > VALID_PERIOD_HOURS) {
             orderState = State.CANCELLED;
             throw new OrderExpiredException();
@@ -78,7 +65,7 @@ public class Order extends Clock {
         orderState = State.REALIZED;
     }
 
-    State getOrderState() {
+    public State getOrderState() {
         return orderState;
     }
 
